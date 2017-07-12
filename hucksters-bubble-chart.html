@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="hucksters-bubble-chart">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * `hucksters-bubble-chart`
+     * Bubble chart web component
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class HuckstersBubbleChart extends Polymer.Element {
+      static get is() { return 'hucksters-bubble-chart'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'hucksters-bubble-chart'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(HuckstersBubbleChart.is, HuckstersBubbleChart);
+  </script>
+</dom-module>
