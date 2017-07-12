@@ -1,30 +1,58 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>hucksters-bubble-chart demo</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <title>hucksters-bubble-chart demo</title>
 
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../hucksters-bubble-chart.html">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js" charset="utf-8"></script>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-    <custom-style>
-      <style is="custom-style" include="demo-pages-shared-styles">
-      </style>
-    </custom-style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>Basic hucksters-bubble-chart demo</h3>
-      <demo-snippet>
-        <template>
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../hucksters-bubble-chart.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+
+    </style>
+  </custom-style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Basic hucksters-bubble-chart demo</h3>
+    <demo-snippet>
+      <template>
           <hucksters-bubble-chart></hucksters-bubble-chart>
         </template>
-      </demo-snippet>
-    </div>
-  </body>
+    </demo-snippet>
+  </div>
+  <script>
+    var hbc = document.querySelector('hucksters-bubble-chart');
+    hbc.set('title', 'Нагрузка на заемщиков');
+    hbc.set('xlabel', 'долг/EBIDTA');
+    hbc.set('ylabel', 'процентная ставка');
+    hbc.set('chartData', [{
+      x: 0,
+      y: 3,
+      r: 10,
+      color: 'red',
+    }, {
+      x: 5,
+      y: 5,
+      r: 120,
+      color: 'yellow',
+    }, {
+      x: 10,
+      y: 0,
+      r: 200,
+      color: 'green',
+    },
+  ]);
+  </script>
+</body>
+
 </html>
