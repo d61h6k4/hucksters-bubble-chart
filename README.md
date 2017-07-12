@@ -1,4 +1,5 @@
 # hucksters-bubble-chart
+<hr>
 
 Bubble chart web component
 
