@@ -7,7 +7,8 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+    <div id="hucksters_bubble_chart_wp" width=[[width]] height=[[height]]>
+    </div>
   </template>
 
   <script>
@@ -20,14 +21,154 @@
      * @demo demo/index.html
      */
     class HuckstersBubbleChart extends Polymer.Element {
-      static get is() { return 'hucksters-bubble-chart'; }
+      static get is() {
+        return 'hucksters-bubble-chart';
+      }
+
       static get properties() {
         return {
-          prop1: {
+          width: {
+            type: Number,
+            value: 500,
+          },
+          height: {
+            type: Number,
+            value: 300,
+          },
+          title: {
             type: String,
-            value: 'hucksters-bubble-chart'
+          },
+          xlabel: {
+            type: String,
+          },
+          ylabel: {
+            type: String,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
+        Polymer.RenderStatus.afterNextRender(this, function () {
+          this.loadData(this.chartData, this.chartDataURL)
+            .then(chartData => {
+              this.thereIsNoData = false;
+              this.draw(chartData);
+            })
+            .catch(err => console.error(err));
+        });
+      }
+
+      loadData(chartData, chartDataURL) {
+        return new Promise(function (resolve, reject) {
+          if (chartData === undefined) {
+            if (chartDataURL === undefined) {
+              reject(new Error('You have to set chartData or chartDataURL attributes'));
+            } else {
+              reject(new Error('Not implemented yet'));
+            }
+          };
+
+          resolve(chartData);
+        });
+      }
+
+      draw(chartData) {
+        let color = (clr) => {
+          if (clr === 'red') {
+            return '#EF3E4A';
+          } else if (clr === 'yellow') {
+            return '#FBFE56';
+          } else if (clr === 'green') {
+            return '#17C37B';
+          } else {
+            return '#2C3979';
           }
         };
+
+        let margin = {
+          top: 40,
+          right: 0,
+          bottom: 45,
+          left: 50,
+        };
+
+        let width = this.width - margin.left - margin.right;
+        let height = this.height - margin.top - margin.bottom;
+        let svg = d3.select(this.$.hucksters_bubble_chart_wp)
+          .append('svg')
+          .attr('width', this.width)
+          .attr('height', this.height)
+          .append('g')
+          .attr('transform', `translate(${margin.left},${margin.top})`);
+        svg.append('text')
+          .attr('class', 'signature header')
+          .attr('x', width)
+          .attr('y', height + margin.top)
+          .attr('text-anchor', 'end')
+          .text(this.xlabel);
+        svg.append('text')
+          .attr('class', 'signature')
+          .attr('x', -10)
+          .attr('y', (height + margin.top) / 2)
+          .attr('text-anchor', 'middle')
+          .attr('transform', `rotate(270, -10, ${(height + margin.top) / 2})`)
+          .text(this.ylabel);
+        svg.append('text')
+          .attr('class', 'signature')
+          .attr('x', -10)
+          .attr('y', -10)
+          .attr('text-anchor', 'start')
+          .attr('font-family', 'Verdana')
+          .attr('font-size', 23)
+          .text(this.title);
+        let radius = d3.scaleLinear()
+          .domain([d3.min(chartData, (d) => d.r), d3.max(chartData, (d) => d.r)])
+          .range([10, Math.min(width, height) * 0.2]);
+        let radiusMax = d3.max(chartData, (d) => radius(d.r)) + 5;
+        let x = d3.scaleLinear()
+          .domain([d3.min(chartData, (d) => d.x), d3.max(chartData, (d) => d.x)])
+          .range([radiusMax, width - radiusMax]);
+        let y = d3.scaleLinear()
+          .domain([d3.min(chartData, (d) => d.y), d3.max(chartData, (d) => d.y)])
+          .range([height - radiusMax, radiusMax]);
+        let xForAxis = d3.scaleLinear()
+          .domain([d3.min(chartData, (d) => d.x), d3.max(chartData, (d) => d.x)])
+          .range([0, width]);
+        let yForAxis = d3.scaleLinear()
+          .domain([d3.min(chartData, (d) => d.y), d3.max(chartData, (d) => d.y)])
+          .range([height, 0]);
+        let xAxis = d3.axisTop(xForAxis)
+          .ticks(4)
+          .tickSize(height);
+        let yAxis = d3.axisRight(yForAxis)
+          .ticks(3)
+          .tickSize(width);
+        let gYAxis = svg.append('g')
+          .attr('class', 'y axis')
+          .call(yAxis);
+        gYAxis.select('.domain').remove();
+        gYAxis.selectAll('.tick line')
+          .attr('stroke', '#C0C2CE')
+          .attr('stroke-dasharray', '2,2');
+        gYAxis.selectAll('.tick text').attr('x', 4).attr('dy', -4);
+        let gXAxis = svg.append('g')
+          .attr('transform', `translate(0, ${height})`)
+          .call(xAxis);
+        gXAxis.select('.domain').remove();
+        gXAxis.selectAll('.tick line')
+          .attr('stroke', '#B7E3E4')
+          .attr('stroke-dasharray', '2,2');
+        gXAxis.selectAll('.tick text').attr('y', 12).attr('dx', -6);
+        svg.selectAll('circle')
+          .data(chartData.sort((x, y) => d3.descending(x.r, y.r)))
+          .enter()
+          .append('circle')
+          .attr('cx', (d) => x(d.x))
+          .attr('cy', (d) => y(d.y))
+          .attr('r', (d) => radius(d.r))
+          .style('fill', (d) => color(d.color))
+          .style('fill-opacity', 0.9);
       }
     }
 
