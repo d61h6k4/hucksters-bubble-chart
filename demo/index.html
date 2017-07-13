@@ -72,6 +72,29 @@
         }]
       ],
     }, ]);
+    setTimeout(() => hbc.set('chartData', [{
+      x: 10,
+      y: 10,
+      r: 10,
+      color: 'green',
+      ingo: [{
+        'value': 'Test'
+      }, {
+        'value': 'test'
+      }]
+    }, {
+      x: 50,
+      y: 100,
+      r: 200,
+      color: 'green',
+      info: [
+        [{
+          'value': 'Долг (млн. руб.)'
+        }, {
+          'value': 200
+        }]
+      ],
+    }, ]), 10000);
   </script>
 </body>
 
