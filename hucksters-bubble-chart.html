@@ -168,7 +168,18 @@
           .attr('cy', (d) => y(d.y))
           .attr('r', (d) => radius(d.r))
           .style('fill', (d) => color(d.color))
-          .style('fill-opacity', 0.9);
+          .style('fill-opacity', 0.9)
+          .on('mouseover', function (d) {
+            svg.selectAll('circle')
+               .style('fill-opacity', 0.3);
+
+            d3.select(this)
+              .style('fill-opacity', 1);
+          })
+          .on('mouseout', function (d) {
+            svg.selectAll('circle')
+               .style('fill-opacity', 1);
+          });
       }
     }
 
