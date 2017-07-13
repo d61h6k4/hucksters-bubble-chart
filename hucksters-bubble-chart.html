@@ -6,6 +6,9 @@
       :host {
         display: block;
       }
+      :host .tooltip {
+        position:absolute;
+      }
     </style>
     <div id="hucksters_bubble_chart_wp" width=[[width]] height=[[height]]>
     </div>
@@ -95,6 +98,11 @@
 
         let width = this.width - margin.left - margin.right;
         let height = this.height - margin.top - margin.bottom;
+        let tooltip = d3.select(this.$.hucksters_bubble_chart_wp)
+          .append('div')
+          .attr('class', 'tooltip')
+          .style('opacity', 0);
+
         let svg = d3.select(this.$.hucksters_bubble_chart_wp)
           .append('svg')
           .attr('width', this.width)
@@ -170,14 +178,30 @@
           .style('fill', (d) => color(d.color))
           .style('fill-opacity', 0.9)
           .on('mouseover', function (d) {
+            let _this = this;
+
             svg.selectAll('circle')
+               .filter(function (d) { return _this != this; })
+               .transition()
+               .duration(200)
                .style('fill-opacity', 0.3);
 
-            d3.select(this)
-              .style('fill-opacity', 1);
+            tooltip.transition()
+              .duration(200)
+              .style('opacity', 1);
+
+            tooltip.html('Tooltip')
+               .style('left', (d3.event.pageX) + 'px')
+               .style('top', (d3.event.pageY - 28) + 'px');
           })
           .on('mouseout', function (d) {
+            tooltip.transition()
+              .duration(500)
+              .style('opacity', 0);
+
             svg.selectAll('circle')
+               .transition()
+               .duration(500)
                .style('fill-opacity', 1);
           });
       }
