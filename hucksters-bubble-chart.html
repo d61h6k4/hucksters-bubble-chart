@@ -7,7 +7,23 @@
         display: block;
       }
       :host .tooltip {
-        position:absolute;
+        display: table;
+        position: absolute;
+      }
+      :host .tooltip table {
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      :host .tooltip table td {
+        padding: 10px;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+      :host .tooltip table tbody tr:nth-child(odd) {
+        background: "#FF33CC";
+      }
+      :host .tooltip table tbody tr:nth-child(even) {
+        background: "#E495E4";
       }
     </style>
     <div id="hucksters_bubble_chart_wp" width=[[width]] height=[[height]]>
@@ -190,14 +206,27 @@
               .duration(200)
               .style('opacity', 1);
 
-            tooltip.html('Tooltip')
-               .style('left', (d3.event.pageX) + 'px')
+            tooltip.append('table')
+                   .append('tbody')
+                   .selectAll('tr')
+                   .data(d.info)
+                   .enter()
+                   .append('tr')
+                   .selectAll('td')
+                   .data(function (d) {return d;})
+                   .enter()
+                   .append('td')
+                   .text(function (d) {return d.value;});
+
+            tooltip.style('left', (d3.event.pageX) + 'px')
                .style('top', (d3.event.pageY - 28) + 'px');
           })
           .on('mouseout', function (d) {
             tooltip.transition()
               .duration(500)
               .style('opacity', 0);
+
+            tooltip.select('table').remove();
 
             svg.selectAll('circle')
                .transition()
